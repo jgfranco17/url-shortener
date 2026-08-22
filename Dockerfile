@@ -23,7 +23,12 @@ COPY api/ /backend/api/
 FROM builder AS app
 
 WORKDIR /backend
-EXPOSE 8080
+
+ARG PORT=8080
+EXPOSE ${PORT}
+
+ARG ENVIRONMENT="development"
+ENV APP_ENVIRONMENT=${ENVIRONMENT}
 
 CMD ["uvicorn", "api.service.main:app", "--host", "0.0.0.0", "--port", "8080"]
 

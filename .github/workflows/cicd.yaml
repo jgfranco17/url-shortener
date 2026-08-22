@@ -1,5 +1,5 @@
 ---
-name: CI/CD
+name: CICD
 
 "on":
   push:
@@ -9,9 +9,13 @@ name: CI/CD
     branches:
       - "main"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  test:
-    name: Run Tests
+  unit-tests:
+    name: Run Unit Tests
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -30,13 +34,8 @@ jobs:
             --cov-branch \
             --cov-fail-under=80 | tee unit-tests.log
 
-      - name: Build image
-        run: |
-          just build
-
-  build:
-    name: Build Image
-    needs: test
+  integration-tests:
+    name: Run Integration Tests
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -51,5 +50,18 @@ jobs:
           include-docker: true
 
       - name: Build image
+        env:
+          ENVIRONMENT: "local"
         run: |
           just build
+
+      - name: Start container
+        run: |
+          docker compose up -d
+          sleep 10
+
+      - name: Run integration tests
+        env:
+          RUN_INTEGRATION_TESTS: "true"
+        run: |
+          just pytest -vv -m "not unit"
