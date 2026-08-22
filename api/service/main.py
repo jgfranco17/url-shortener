@@ -4,8 +4,8 @@ import logging
 
 from fastapi import FastAPI
 
-from api.core.config import load_configuration_from_env, setup_logging
-from api.core.middleware import ProcessTimeMiddleware
+from api.core.internal.config import load_configuration_from_env, setup_logging
+from api.core.internal.middleware import ProcessTimeMiddleware
 
 logger = logging.getLogger(__name__)
 
