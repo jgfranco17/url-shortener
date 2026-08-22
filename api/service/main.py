@@ -6,6 +6,8 @@ from fastapi import FastAPI
 
 from api.core.internal.config import load_configuration_from_env, setup_logging
 from api.core.internal.middleware import ProcessTimeMiddleware
+from api.service.routes.base.common import base_router
+from api.service.routes.v0.shortener import v0_router
 
 logger = logging.getLogger(__name__)
 
@@ -20,16 +22,5 @@ app = FastAPI(
 )
 
 app.add_middleware(ProcessTimeMiddleware)
-
-
-@app.get("/")
-def index():
-    """Root endpoint for the URL Shortener API."""
-    return {"message": "Welcome to my URL Shortener API!"}
-
-
-@app.get("/healthz")
-def health_check():
-    """Health check endpoint to verify the API is running."""
-    logger.debug("Health check endpoint called")
-    return {"status": "healthy"}
+app.include_router(base_router)
+app.include_router(v0_router)
