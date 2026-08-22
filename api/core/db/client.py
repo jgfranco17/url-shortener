@@ -2,6 +2,7 @@ import logging
 from collections.abc import Iterator
 
 from api.core.db.models import DatabaseClient, UrlAliasRecord
+from api.core.internal.config import AppEnvironment, load_configuration_from_env
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +41,13 @@ class InMemoryDatabaseClient(DatabaseClient):
 
 def retrieve_database() -> Iterator[DatabaseClient]:
     """Dependency function to get the database client."""
-    db_client = InMemoryDatabaseClient()
+    config = load_configuration_from_env()
+    if config.environment in {AppEnvironment.LOCAL, AppEnvironment.DEVELOPMENT}:
+        db_client = InMemoryDatabaseClient()
+    else:
+        raise RuntimeError(
+            f"Database client for environment '{config.environment}' is not implemented."
+        )
     db_client.connect()
     try:
         yield db_client

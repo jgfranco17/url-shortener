@@ -1,13 +1,26 @@
 import logging
+from enum import StrEnum
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 logger = logging.getLogger(__name__)
 
 
+class AppEnvironment(StrEnum):
+    """Application environment types."""
+
+    LOCAL = "local"
+    DEVELOPMENT = "development"
+    STAGING = "staging"
+    PRODUCTION = "production"
+
+
 class Settings(BaseSettings):
+    """Settings model for application configuration loaded from env variables."""
+
     model_config = SettingsConfigDict(validate_default=True, env_prefix="APP_")
     log_level: str = "INFO"
+    environment: AppEnvironment = AppEnvironment.DEVELOPMENT
 
 
 def load_configuration_from_env() -> Settings:
