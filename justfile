@@ -1,4 +1,4 @@
-PORT := "8000"
+PORT := env("APP_PORT", "8080")
 
 # List out available commands
 _default:
