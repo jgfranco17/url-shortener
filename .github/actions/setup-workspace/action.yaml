@@ -1,6 +1,11 @@
 ---
 name: "Setup Development Workspace"
 description: "Configure Python and prepare the workspace"
+inputs:
+  include-docker:
+    description: "Whether to also configure Docker for the workspace"
+    required: false
+    default: "false"
 
 runs:
   using: composite
@@ -21,3 +26,7 @@ runs:
 
     - name: Install Just
       uses: extractions/setup-just@v4
+
+    - name: Set up Docker
+      if: ${{ inputs.include-docker == 'true' || inputs.include-docker == 'True' || inputs.include-docker == 'TRUE' }}
+      uses: docker/setup-buildx-action@v4

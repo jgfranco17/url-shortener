@@ -11,7 +11,7 @@ ENV_APP_PORT: Final[str] = "APP_PORT"
 @pytest.fixture
 def integration_client() -> IntegrationClient:
     """Fixture for the integration test client."""
-    port_from_env = os.getenv(ENV_APP_PORT, "8000")
+    port_from_env = os.getenv(ENV_APP_PORT, "8080")
     assert port_from_env.isdigit(), (
         f"{ENV_APP_PORT} env variable must be a valid integer."
     )

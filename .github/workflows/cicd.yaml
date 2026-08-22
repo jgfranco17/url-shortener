@@ -1,4 +1,5 @@
-name: Testing
+---
+name: CI/CD
 
 "on":
   push:
@@ -9,8 +10,8 @@ name: Testing
       - "main"
 
 jobs:
-  unit-tests:
-    name: Run Unit Tests
+  test:
+    name: Run Tests
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -29,12 +30,26 @@ jobs:
             --cov-branch \
             --cov-fail-under=80 | tee unit-tests.log
 
-      - name: Summarize test results
-        if: ${{ steps.unit-tests.outcome == 'success' || steps.unit-tests.outcome == 'failure' }}
+      - name: Build image
         run: |
-          echo "## Test Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo '```console' >> $GITHUB_STEP_SUMMARY
-          echo "$(cat unit-tests.log)" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
+          just build
+
+  build:
+    name: Build Image
+    needs: test
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Run setup
+        uses: ./.github/actions/setup-workspace
+        with:
+          include-docker: true
+
+      - name: Build image
+        run: |
+          just build

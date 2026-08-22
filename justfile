@@ -18,3 +18,10 @@ start-local:
 pytest *args:
 	@echo "Running unittest suite..."
 	uv run pytest {{ args }}
+
+# Build Docker image for the API
+build tag="latest":
+    #!/usr/bin/env bash
+    export TAG={{ tag }}
+    echo "Building Docker image (tag: $TAG)"
+    docker compose build
