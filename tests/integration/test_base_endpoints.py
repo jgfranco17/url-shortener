@@ -1,0 +1,10 @@
+from tests.integration.utils import IntegrationClient
+from tests.shared.flags import mark_as_integration_test
+
+
+@mark_as_integration_test("INTG-001")
+def test_index(integration_client: IntegrationClient) -> None:
+    """Test the index endpoint."""
+    response = integration_client.get("/")
+    assert response.status_code == 200
+    assert response.json() == {"message": "Welcome to my URL Shortener API!"}

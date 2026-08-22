@@ -22,6 +22,7 @@ dev = [
     "isort>=8.0.1",
     "pytest>=9.1.1",
     "pytest-cov>=7.1.0",
+    "requests>=2.34.2",
     "ruff>=0.16.4",
 ]
 
