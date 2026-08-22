@@ -100,3 +100,6 @@ instance/
 
 # Terraform
 **/.terraform**
+
+# Linters
+.ruff_cache/
