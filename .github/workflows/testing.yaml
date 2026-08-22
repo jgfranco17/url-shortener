@@ -1,0 +1,40 @@
+name: Testing
+
+"on":
+  push:
+    branches:
+      - "main"
+  pull_request:
+    branches:
+      - "main"
+
+jobs:
+  unit-tests:
+    name: Run Unit Tests
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Run setup
+        uses: ./.github/actions/setup-workspace
+
+      - name: Run unit tests
+        id: unit-tests
+        run: |
+          just pytest -vv -m "unit" --cov=api \
+            --cov-branch \
+            --cov-fail-under=80 | tee unit-tests.log
+
+      - name: Summarize test results
+        if: ${{ steps.unit-tests.outcome == 'success' || steps.unit-tests.outcome == 'failure' }}
+        run: |
+          echo "## Test Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo '```console' >> $GITHUB_STEP_SUMMARY
+          echo "$(cat unit-tests.log)" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
