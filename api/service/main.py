@@ -5,8 +5,9 @@ import logging
 from fastapi import FastAPI
 
 from api.core.internal.config import load_configuration_from_env, setup_logging
-from api.core.internal.middleware import ProcessTimeMiddleware
+from api.core.internal.middleware import ProcessTimeMiddleware, PrometheusMiddleware
 from api.service.routes.base.common import base_router
+from api.service.routes.base.obs import observability_router
 from api.service.routes.v0.shortener import v0_router
 
 logger = logging.getLogger(__name__)
@@ -22,5 +23,7 @@ app = FastAPI(
 )
 
 app.add_middleware(ProcessTimeMiddleware)
+app.add_middleware(PrometheusMiddleware)
 app.include_router(base_router)
+app.include_router(observability_router)
 app.include_router(v0_router)
